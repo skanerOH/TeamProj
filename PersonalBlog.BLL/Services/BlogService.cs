@@ -3,7 +3,7 @@ using PersonalBlog.BLL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DAL.Interfaces;
+using PersonalBlog.DAL.Interfaces;
 using System.Threading.Tasks;
 using PersonalBlog.BLL.Models.DataModels;
 using PersonalBlog.DAL.Entities;
