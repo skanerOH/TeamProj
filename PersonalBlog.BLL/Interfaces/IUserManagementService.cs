@@ -8,10 +8,12 @@ namespace PersonalBlog.BLL.Interfaces
 {
     public interface IUserManagementService
     {
-        public Task<Tuple<IEnumerable<string>, UserModel>> RegisterUserAsync(UserModel userModel, string password);
+        public Task<UserModel> RegisterUserAsync(UserModel userModel, string password);
 
-        public Task<Tuple<IEnumerable<String>, UserModel>> LoginAsync(UserModel userModel, string password);
+        public Task<UserModel> LoginAsync(UserModel userModel, string password);
 
         public Task<UserModel> GetUserByIdAsync(string Id);
+
+        public Task ChangeUserPasswordAsync(string userId, string password, string newPassword, string confirmPassword);
     }
 }
