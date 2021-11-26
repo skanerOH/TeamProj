@@ -1,18 +1,16 @@
-﻿using BLL.Models.DataModels;
+﻿using PersonalBlog.BLL.Models.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Interfaces
+namespace PersonalBlog.BLL.Interfaces
 {
     public interface ICommentService
     {
         public Task<IEnumerable<CommentModel>> GetCommentsByArticleIdForUserAsync(int articleId);
 
         public Task<IEnumerable<CommentModel>> GetCommentsByArticleIdForAdminAsync(int articleId);
-
-        public Task<IEnumerable<CommentModel>> GetCommentsByArticleIdAsync(int articleId, string userId, string userRole);
 
         public Task AddCommentAsync(string text, string userId, int articleId);
 

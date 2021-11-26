@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
-using BLL.Interfaces;
-using BLL.Models.DataModels;
-using DAL.Entities;
-using DAL.Interfaces;
+using PersonalBlog.BLL.Interfaces;
+using PersonalBlog.BLL.Models.DataModels;
+using PersonalBlog.DAL.Entities;
+using PersonalBlog.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Services
+namespace PersonalBlog.BLL.Services
 {
     public class TagService : ITagService
     {
@@ -30,6 +30,7 @@ namespace BLL.Services
                 return res;
 
             res = (await _unitOfWork.TagRepository.GetOrCreateTagsByListAsync(tagList)).Select(t => _mapper.Map<Tag, TagModel>(t)).ToList();
+            await _unitOfWork.SaveAsync();
             return res;
         }
     }

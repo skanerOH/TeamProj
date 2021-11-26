@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using BLL.Interfaces;
-using BLL.Models.DataModels;
-using BLL.Validation;
-using DAL.Entities;
-using DAL.Interfaces;
+using PersonalBlog.BLL.Interfaces;
+using PersonalBlog.BLL.Models.DataModels;
+using PersonalBlog.BLL.Validation;
+using PersonalBlog.DAL.Entities;
+using PersonalBlog.DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Services
+namespace PersonalBlog.BLL.Services
 {
     public class CommentService : ICommentService
     {
@@ -90,18 +90,13 @@ namespace BLL.Services
         {
             var dbcomment = await _unitOfWork.CommentRepository.GetByIdAsync(commentId);
 
-            if (dbcomment == null)
-                throw new BlogsException("comment with provided id does not exist");
-
             if (userId.Equals(dbcomment.UserWithIdentityId) || userRole.Equals("admin"))
             {
                 await _unitOfWork.CommentRepository.DeleteByIdAsync(commentId);
                 await _unitOfWork.SaveAsync();
             }
-            else
-            {
-                throw new BlogsException("current user has no permission to delete this comment");
-            }
+
+            throw new BlogsException("current user has no permission to delete this comment");
         }
 
         public async Task<CommentModel> GetCommentByIdAsync(int commentId)
@@ -111,15 +106,6 @@ namespace BLL.Services
                 throw new BlogsException("comment with provided id does not exist");
 
             return _mapper.Map<Comment, CommentModel>(dbcomment);
-        }
-
-        public async Task<IEnumerable<CommentModel>> GetCommentsByArticleIdAsync(int articleId, string userId, string userRole)
-        {
-            if (await _unitOfWork.ArticleRepository.GetByIdAsync(articleId) == null)
-                throw new BlogsException("unexisting article");
-            return (await _unitOfWork.CommentRepository.GetCommentsAsync(c => c.ArticleId == articleId && 
-            (!c.IsBanned || userRole.Equals("admin") || c.UserWithIdentityId.Equals(userId))
-            )).Select(c => _mapper.Map<Comment, CommentModel>(c));
         }
     }
 }

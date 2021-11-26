@@ -1,10 +1,10 @@
-﻿using BLL.Models.DataModels;
+﻿using PersonalBlog.BLL.Models.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Interfaces
+namespace PersonalBlog.BLL.Interfaces
 {
     public interface ITagService
     {

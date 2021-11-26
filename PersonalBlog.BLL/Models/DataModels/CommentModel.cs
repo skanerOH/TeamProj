@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BLL.Models.DataModels
+namespace PersonalBlog.BLL.Models.DataModels
 {
     public class CommentModel
     {

@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
-using BLL.Interfaces;
-using BLL.Models.DataModels;
-using BLL.Validation;
-using DAL.Entities;
-using DAL.Interfaces;
+using PersonalBlog.BLL.Interfaces;
+using PersonalBlog.BLL.Models.DataModels;
+using PersonalBlog.BLL.Validation;
+using PersonalBlog.DAL.Entities;
+using PersonalBlog.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Services
+namespace PersonalBlog.BLL.Services
 {
     public class ArticleService : IArticleService
     {
@@ -87,15 +87,12 @@ namespace BLL.Services
             await _unitOfWork.SaveAsync();
         }
 
-        public async Task<ArticleModel> GetArticleByIdAsync(int articleId, string userId, string userRole)
+        public async Task<ArticleModel> GetArticleById(int articleId)
         {
             var dbarticle = await _unitOfWork.ArticleRepository.GetArticleWithDatailsByIdAsync(articleId);
 
             if (dbarticle == null)
                 throw new BlogsException("unexisting article");
-
-            if (dbarticle.IsBanned && !userRole.Equals("admin") && !dbarticle.Blog.UserWithIdentityId.Equals(userId))
-                throw new BlogsException("user does not have permission to get this article");
 
             return _mapper.Map<Article, ArticleModel>(dbarticle);
         }
@@ -126,7 +123,7 @@ namespace BLL.Services
             }
             else
             {
-                dbarticles = await _unitOfWork.ArticleRepository.GetArticlesWithDetailsAsync(a => a.BlogId == blogId && (a.Blog.UserWithIdentityId.Equals(userId) || !a.IsBanned));
+                dbarticles = await _unitOfWork.ArticleRepository.GetArticlesWithDetailsAsync(a => a.BlogId == blogId && (a.Blog.UserWithIdentityId.CompareTo(userId) == 0 || !a.IsBanned));
             }
             return _mapper.Map<IEnumerable<Article>, IEnumerable<ArticleModel>>(dbarticles);
         }
@@ -154,7 +151,7 @@ namespace BLL.Services
             if (blog == null)
                 throw new BlogsException("unexisting blog");
 
-            if (!blog.UserWithIdentityId.Equals(userId))
+            if (blog.UserWithIdentityId.CompareTo(userId) != 0)
                 throw new BlogsException("user can edit articles only in his blog");
 
             var dbarticle = await _unitOfWork.ArticleRepository.GetArticleWithDatailsByIdAsync(articleModel.Id);

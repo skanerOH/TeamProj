@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BLL.Validation
+namespace PersonalBlog.BLL.Validation
 {
     public class BlogsException : Exception
     {
