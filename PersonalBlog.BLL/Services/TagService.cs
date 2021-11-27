@@ -30,7 +30,6 @@ namespace PersonalBlog.BLL.Services
                 return res;
 
             res = (await _unitOfWork.TagRepository.GetOrCreateTagsByListAsync(tagList)).Select(t => _mapper.Map<Tag, TagModel>(t)).ToList();
-            await _unitOfWork.SaveAsync();
             return res;
         }
     }

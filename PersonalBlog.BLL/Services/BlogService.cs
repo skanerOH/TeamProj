@@ -83,6 +83,25 @@ namespace PersonalBlog.BLL.Services
             return _mapper.Map<IEnumerable<Blog>, IEnumerable<BlogModel>>(dbBlogs);
         }
 
+        public async Task<BlogModel> GetBlogByIdAsync(int blogId, string userId, string userRole)
+        {
+            var dbblog = await _unitOfWork.BlogRepository.GetBlogWithDetailsByIdAsync(blogId);
+
+            if (dbblog == null)
+                throw new BlogsException("unexisting blog");
+
+            if (dbblog.IsBanned && !(userRole.Equals("admin") || userId.Equals(dbblog.UserWithIdentityId)))
+                throw new BlogsException("only admins or blog owners are permitted to view banned blogs");
+
+            return _mapper.Map<Blog, BlogModel>(dbblog);
+        }
+
+        public async Task<IEnumerable<BlogModel>> GetBlogsWithDetalisByUserIdAsync(string userId)
+        {
+            IEnumerable<Blog> dbBlogs = await _unitOfWork.BlogRepository.GetAllBlogsWithDetailsAsync(b => b.UserWithIdentityId.Equals(userId));
+            return _mapper.Map<IEnumerable<Blog>, IEnumerable<BlogModel>>(dbBlogs);
+        }
+
         public async Task UnbanArticle(int blogId, string userRole)
         {
             var dbblog = await _unitOfWork.BlogRepository.GetByIdAsync(blogId);

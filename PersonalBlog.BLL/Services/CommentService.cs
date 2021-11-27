@@ -90,13 +90,18 @@ namespace PersonalBlog.BLL.Services
         {
             var dbcomment = await _unitOfWork.CommentRepository.GetByIdAsync(commentId);
 
+            if (dbcomment == null)
+                throw new BlogsException("comment with provided id does not exist");
+
             if (userId.Equals(dbcomment.UserWithIdentityId) || userRole.Equals("admin"))
             {
                 await _unitOfWork.CommentRepository.DeleteByIdAsync(commentId);
                 await _unitOfWork.SaveAsync();
             }
-
-            throw new BlogsException("current user has no permission to delete this comment");
+            else
+            {
+                throw new BlogsException("current user has no permission to delete this comment");
+            }
         }
 
         public async Task<CommentModel> GetCommentByIdAsync(int commentId)
@@ -106,6 +111,15 @@ namespace PersonalBlog.BLL.Services
                 throw new BlogsException("comment with provided id does not exist");
 
             return _mapper.Map<Comment, CommentModel>(dbcomment);
+        }
+
+        public async Task<IEnumerable<CommentModel>> GetCommentsByArticleIdAsync(int articleId, string userId, string userRole)
+        {
+            if (await _unitOfWork.ArticleRepository.GetByIdAsync(articleId) == null)
+                throw new BlogsException("unexisting article");
+            return (await _unitOfWork.CommentRepository.GetCommentsAsync(c => c.ArticleId == articleId && 
+            (!c.IsBanned || userRole.Equals("admin") || c.UserWithIdentityId.Equals(userId))
+            )).Select(c => _mapper.Map<Comment, CommentModel>(c));
         }
     }
 }

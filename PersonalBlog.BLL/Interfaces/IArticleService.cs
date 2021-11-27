@@ -21,7 +21,7 @@ namespace PersonalBlog.BLL.Interfaces
 
         public Task DeleteArticleAsync(int articleId, string userId);
 
-        public Task<ArticleModel> GetArticleById(int articleId);
+        public Task<ArticleModel> GetArticleByIdAsync(int articleId, string userId, string userRole);
 
         public Task<IEnumerable<ArticleModel>> GetArticlesByFiltersAsync(string textSearchStr, IEnumerable<string> tags, IEnumerable<int> takenIds, int countToTake, string userRole);
     }

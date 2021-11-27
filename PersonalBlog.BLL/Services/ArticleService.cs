@@ -87,12 +87,15 @@ namespace PersonalBlog.BLL.Services
             await _unitOfWork.SaveAsync();
         }
 
-        public async Task<ArticleModel> GetArticleById(int articleId)
+        public async Task<ArticleModel> GetArticleByIdAsync(int articleId, string userId, string userRole)
         {
             var dbarticle = await _unitOfWork.ArticleRepository.GetArticleWithDatailsByIdAsync(articleId);
 
             if (dbarticle == null)
                 throw new BlogsException("unexisting article");
+
+            if (dbarticle.IsBanned && !userRole.Equals("admin") && !dbarticle.Blog.UserWithIdentityId.Equals(userId))
+                throw new BlogsException("user does not have permission to get this article");
 
             return _mapper.Map<Article, ArticleModel>(dbarticle);
         }
@@ -123,7 +126,7 @@ namespace PersonalBlog.BLL.Services
             }
             else
             {
-                dbarticles = await _unitOfWork.ArticleRepository.GetArticlesWithDetailsAsync(a => a.BlogId == blogId && (a.Blog.UserWithIdentityId.CompareTo(userId) == 0 || !a.IsBanned));
+                dbarticles = await _unitOfWork.ArticleRepository.GetArticlesWithDetailsAsync(a => a.BlogId == blogId && (a.Blog.UserWithIdentityId.Equals(userId) || !a.IsBanned));
             }
             return _mapper.Map<IEnumerable<Article>, IEnumerable<ArticleModel>>(dbarticles);
         }
@@ -151,7 +154,7 @@ namespace PersonalBlog.BLL.Services
             if (blog == null)
                 throw new BlogsException("unexisting blog");
 
-            if (blog.UserWithIdentityId.CompareTo(userId) != 0)
+            if (!blog.UserWithIdentityId.Equals(userId))
                 throw new BlogsException("user can edit articles only in his blog");
 
             var dbarticle = await _unitOfWork.ArticleRepository.GetArticleWithDatailsByIdAsync(articleModel.Id);

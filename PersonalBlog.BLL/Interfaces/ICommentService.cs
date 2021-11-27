@@ -12,6 +12,8 @@ namespace PersonalBlog.BLL.Interfaces
 
         public Task<IEnumerable<CommentModel>> GetCommentsByArticleIdForAdminAsync(int articleId);
 
+        public Task<IEnumerable<CommentModel>> GetCommentsByArticleIdAsync(int articleId, string userId, string userRole);
+
         public Task AddCommentAsync(string text, string userId, int articleId);
 
         public Task UpdateCommentBanStatusAsync(int commentId, bool isBanned);

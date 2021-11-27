@@ -10,6 +10,8 @@ namespace PersonalBlog.BLL.Interfaces
     {
         public Task<IEnumerable<BlogModel>> GetAllBlogsWithDetailsAsync(string userId, string userRole);
 
+        public Task<IEnumerable<BlogModel>> GetBlogsWithDetalisByUserIdAsync(string userId);
+
         public Task CreateBlogAsync(BlogModel blogModel);
 
         public Task UpdateBlogAsync(BlogModel blogModel);
@@ -19,5 +21,7 @@ namespace PersonalBlog.BLL.Interfaces
         public Task UnbanArticle(int blogId, string userRole);
 
         public Task DeleteBlogAsync(int blogId, string userId);
+
+        public Task<BlogModel> GetBlogByIdAsync(int blogId, string userId, string userRole);
     }
 }
